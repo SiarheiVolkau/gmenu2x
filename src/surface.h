@@ -23,6 +23,7 @@
 #define SURFACE_H
 
 #include "font_stack.h"
+#include "layout.h"
 
 #include <SDL.h>
 
@@ -48,7 +49,7 @@ std::ostream& operator<<(std::ostream& os, RGBAColor const& color);
 /**
  * Abstract base class for surfaces; wraps SDL_Surface.
  */
-class Surface {
+class Surface : public LayoutItem {
 public:
 	Surface& operator=(Surface const& other) = delete;
 
@@ -59,6 +60,7 @@ public:
 	void setClipRect(int x, int y, int w, int h);
 	void setClipRect(SDL_Rect rect);
 
+	void render(Surface& destination) const;
 	void blit(Surface& destination, int x, int y, int w=0, int h=0, int a=-1) const;
 	void blit(Surface& destination, SDL_Rect container, Font::HAlign halign = Font::HAlignLeft, Font::VAlign valign = Font::VAlignTop) const;
 	void blitCenter(Surface& destination, int x, int y, int w=0, int h=0, int a=-1) const;
@@ -80,7 +82,7 @@ public:
 	}
 
 protected:
-	Surface(SDL_Surface *raw) : raw(raw) {}
+	Surface(SDL_Surface *raw);
 	Surface(Surface const& other);
 
 	SDL_Surface *raw;

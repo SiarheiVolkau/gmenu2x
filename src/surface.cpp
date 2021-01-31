@@ -77,6 +77,12 @@ Surface::Surface(Surface const& other)
 	raw->format->alpha = other.raw->format->alpha;
 }
 
+Surface::Surface(SDL_Surface *raw) : raw(raw)
+{
+	setSize(raw->w, raw->h);
+	setBehave(LAY_CENTER);
+}
+
 void Surface::blit(SDL_Surface *destination, int x, int y, int w, int h, int a) const {
 	if (destination == NULL || a==0) return;
 
@@ -88,6 +94,13 @@ void Surface::blit(SDL_Surface *destination, int x, int y, int w, int h, int a) 
 		SDL_SetAlpha(raw, SDL_SRCALPHA|SDL_RLEACCEL, a);
 	SDL_BlitSurface(raw, (w==0 || h==0) ? NULL : &src, destination, &dest);
 }
+
+void Surface::render(Surface& destination) const {
+	lay_vec4 rect = getRect();
+
+	blit(destination, rect[0], rect[1], rect[2], rect[3]);
+}
+
 void Surface::blit(Surface& destination, int x, int y, int w, int h, int a) const {
 	blit(destination.raw, x, y, w, h, a);
 }
